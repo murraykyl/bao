@@ -11,22 +11,23 @@ t = Table(data)
 print(t[0]['ra'])
 
 h = r.TH1D("hist", "", 100, 105, 265)
+h1 = r.TH2D("hist1", "", 100, 105, 265, 100, 0, 60)
+h2 = r.TH1D("hist2", "", 100,hubble.hubbleRatio(0.4), hubble.hubbleRatio(0.75))
+
 for row in t:
-   h.Fill(row['ra'])
+   ra = row['ra']
+   dec = row['dec']
+   z = row['z']
+   h.Fill(ra)
+   h1.Fill(ra, dec)
+   h2.Fill(hubble.hubbleRatio(z))
+   hubble.comovingDistance(z)
+
 c = r.TCanvas()
 h.Draw()
 c.Print("output.pdf")
-
-h1 = r.TH2D("hist1", "", 100, 105, 265, 100, 0, 60)
-for row in t:
-   h1.Fill(row['ra'], row['dec'])
-c1 = r.TCanvas()
 h1.Draw()
-c1.Print("output1.pdf")
-
-h2 = r.TH1D("hist2", "", 100,hubble.hubbleRatio(0.4), hubble.hubbleRatio(0.75))
-for row in t:
-   h2.Fill(hubble.hubbleRatio(row['z']))
-c2 = r.TCanvas()
+c.Print("output1.pdf")
 h2.Draw()
-c2.Print("output2.pdf")
+c.Print("output2.pdf")
+
