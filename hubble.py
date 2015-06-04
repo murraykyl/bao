@@ -39,7 +39,6 @@ if __name__=="__main__":
     assert comovingDistance(0) == 0
     assert hubbleRatio(0) == 1
 
-
     from random import uniform
 
     cd = ComovingDistance(0.4, 0.7)
