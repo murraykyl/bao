@@ -18,6 +18,12 @@ def comovingDistance(z):
     return integrate.quad(lambda x: 1./hubbleRatio(x),
                           0, z)[0]
 
+def angularDistance(z):
+    return comovingDistance(z)/(1+z)
+
+def luminosityDistance(z):
+    return comovingDistance(z)*(1+z)
+
 class ComovingDistance(object):
     """Lookup table for comoving distance"""
     
