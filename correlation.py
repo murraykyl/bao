@@ -1,6 +1,7 @@
 import math
 from scipy import integrate
 import ROOT as r
+import random
 
 c = 3e5     #km/s
 h = 0.7     #dimensionless universe scale
@@ -35,15 +36,19 @@ def absoluteDistance(xd,yd,zd):                 #Define Distances between Galaxi
     return math.sqrt(xd**2 + yd**2 + zd**2)
 
 def histAA(tab):                                #Create Correlation Function
+    hist = r.TH1D("%f"%random.random(), " ;Log 1+Distance;Counts per Bin", 100, 0, 10)
     for i in range(len(tab)):
+        print "i =", i
         for j in range(len(tab))[i+1:]:
             xi,yi,zi = cartesian(tab[i])
             xj,yj,zj = cartesian(tab[j])
             d = absoluteDistance(xi-xj, yi-yj, zi-zj)
-            histAA = r.TH1D("Galaxy Pairs", "", 100, 0, 1000)
-            histAA.Fill(d)
-        if i == 2:
+            hist.Fill(math.log(1+d))            
+            if j > 100:
+                break
+        if i == 100:
             break
+    return hist
 
 if __name__=="__main__":                        #Test Functions
     print hubbleRatio(.5)
