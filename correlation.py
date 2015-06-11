@@ -2,6 +2,7 @@ import math
 from scipy import integrate
 import ROOT as r
 import random
+import numpy as np
 
 c = 3e5     #km/s
 h = 0.7     #dimensionless universe scale
@@ -14,17 +15,33 @@ omega = {"K0": 0,  #Curvature
 
 def hubbleRatio(z):                             #H(z)/H_0
     return math.sqrt(omega["K0"] * (1+z)**2 +
-                omega["M0"] * (1+z)**3 +
-                omega["R0"] * (1+z)**4 +
-                omega["L0"])
+                     omega["M0"] * (1+z)**3 +
+                     omega["R0"] * (1+z)**4 +
+                     omega["L0"])
 
 def distanceMeasure(z):                         #Comoving Distance Measure
     return (integrate.quad(lambda m: 1/hubbleRatio(m), 
                            0, z)[0] / H0) * c
 
+class ComovingDistance(object):
+    """Lookup table for comoving distance"""
+    
+    def __init__(self, lo, hi, nPoints = 1000):
+        self.lookup = [(z, distanceMeasure(z))
+                       for z in np.arange(lo, hi, (hi-lo)/(nPoints-1))]
+        self.lookup.append((hi, distanceMeasure(hi)))
+
+    def __call__(self, z):
+        lo = self.lookup[0][0]
+        hi = self.lookup[-1][0]
+        i = int((len(self.lookup)-1) * (z - lo) / (hi - lo))
+        x0,y0 = self.lookup[i]
+        x1,y1 = self.lookup[i+1]
+        return y0 + (z - x0) * (y1 - y0) / (x1 - x0)
+
 def cartesian(row):                             #Convert to Cartesian Coordinates
     """Define New Variable and Convert to Cartesian Coordinates"""
-    r = distanceMeasure(row['z'])               #Comoving Distances
+    r = distanceMeasure(row['z'])                            #Comoving Distances
     ra1 = math.pi*row['ra']/180                 #Convert to Radians
     dec1 = math.pi*row['dec']/180               #Convert to Radians
     x = r * math.cos(ra1) * math.cos(dec1)      #X-Coordinate
@@ -54,4 +71,10 @@ if __name__=="__main__":                        #Test Functions
     print hubbleRatio(.5)
     print distanceMeasure(.6)
     print absoluteDistance(12-7, 7-3, 9+17)
-    
+
+    cd = ComovingDistance(0.4, 0.7)
+    for i in range(100):
+        w = np.random.uniform(0.4, 0.7)
+        a = distanceMeasure(w)
+        b = cd(w)
+        assert abs(a-b) < 1e-4
