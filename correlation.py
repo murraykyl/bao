@@ -3,6 +3,8 @@ from scipy import integrate
 import ROOT as r
 import random
 import numpy as np
+from astropy.io import fits
+from astropy.table import Table
 
 c = 3e5     #km/s
 h = 0.7     #dimensionless universe scale
@@ -39,6 +41,8 @@ class ComovingDistance(object):
         x1,y1 = self.lookup[i+1]
         return y0 + (z - x0) * (y1 - y0) / (x1 - x0)
 
+cd = ComovingDistance(0.43, 0.7)
+
 def cartesian(row):                             #Convert to Cartesian Coordinates
     """Define New Variable and Convert to Cartesian Coordinates"""
     r = distanceMeasure(row['z'])                            #Comoving Distances
@@ -52,20 +56,66 @@ def cartesian(row):                             #Convert to Cartesian Coordinate
 def absoluteDistance(xd,yd,zd):                 #Define Distances between Galaxies
     return math.sqrt(xd**2 + yd**2 + zd**2)
 
-def histAA(tab):                                #Create Correlation Function
-    hist = r.TH1D("%f"%random.random(), " ;Log 1+Distance;Counts per Bin", 100, 0, 10)
-    for i in range(len(tab)):
-        print "i =", i
-        for j in range(len(tab))[i+1:]:
-            xi,yi,zi = cartesian(tab[i])
-            xj,yj,zj = cartesian(tab[j])
+
+
+def histAA(tab):                                #Create Galaxy Pair Histogram
+    hist = r.TH1D("%f"%random.random(), " ;Mpc;d^2Eta(d)", 100, 0, 200)
+    for i,(xi,yi,zi) in enumerate(tab):
+        if i%100==0: print "i =", i
+        for xj,yj,zj in tab[i+1:]:
             d = absoluteDistance(xi-xj, yi-yj, zi-zj)
-            hist.Fill(math.log(1+d))            
-            if j > 100:
-                break
-        if i == 100:
-            break
+            hist.Fill(d, d*d)            
     return hist
+
+def histBB(tab):
+    hist = r.TH1D("%f"%random.random(), " ;Mpc;d^2Eta(d)", 100, 0, 200)
+    bb = np.array(tab)
+    for i,row in enumerate(bb):
+        if i%100==0: print "i =", i
+        cc = row - bb[i:]
+        for d in np.sqrt(np.diag(cc.dot(cc.T))):
+            hist.Fill(d, d*d)
+    return hist
+
+
+def hisTopTri(tab1, tab2):
+    hist = r.TH1D("%f"%random.random(), " ;Mpc;d^2Eta(d)", 100, 0, 200)
+    ab = np.array(tab1)
+    bc = np.array(tab2)
+    for i,rowi in enumerate(ab):
+        if i%100=0: print "i = ", i
+        for j in enumerate(bc):
+            ac = rowi - bc[j:]
+            for d in np.sqrt(np.diag(ac.dot(ac.T))):
+                hist.Fill(d, d*d)
+    return hist
+
+def histBotTri(tab1, tab2):
+    hist = r.TH1D("%f"%random.random(), " ;Mpc;d^2Eta(d)", 100, 0, 200)
+    ab = np.array(tab1)
+    bc = np.array(tab2)
+    for i,rowi in enumerate(ab):
+        if i%100=0: print "i = ", i
+        for j in enumerate(bc):
+            ac = rowi - bc[:j]
+            for d in np.sqrt(np.diag(ac.dot(ac.T))):
+                hist.Fill(d, d*d)
+    return hist
+
+
+
+def openData(filename, npoints = None):
+    data = fits.getdata(filename, 1)
+    table = Table(data)
+    print "Open Table ", filename
+    return [cartesian(row)] for row in table[:npoints]]
+
+
+
+
+
+
+
 
 if __name__=="__main__":                        #Test Functions
     print hubbleRatio(.5)
