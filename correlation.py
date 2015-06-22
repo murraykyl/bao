@@ -5,6 +5,7 @@ import random
 import numpy as np
 from astropy.io import fits
 from astropy.table import Table
+import itertools
 
 c = 3e5     #km/s
 h = 0.7     #dimensionless universe scale
@@ -45,7 +46,7 @@ cd = ComovingDistance(0.43, 0.7)
 
 def cartesian(row):                             #Convert to Cartesian Coordinates
     """Define New Variable and Convert to Cartesian Coordinates"""
-    r = distanceMeasure(row['z'])                            #Comoving Distances
+    r = cd(row['z'])                            #Comoving Distances
     ra1 = math.pi*row['ra']/180                 #Convert to Radians
     dec1 = math.pi*row['dec']/180               #Convert to Radians
     x = r * math.cos(ra1) * math.cos(dec1)      #X-Coordinate
@@ -58,14 +59,14 @@ def absoluteDistance(xd,yd,zd):                 #Define Distances between Galaxi
 
 
 
-def histAA(tab):                                #Create Galaxy Pair Histogram
-    hist = r.TH1D("%f"%random.random(), " ;Mpc;d^2Eta(d)", 100, 0, 200)
-    for i,(xi,yi,zi) in enumerate(tab):
-        if i%100==0: print "i =", i
-        for xj,yj,zj in tab[i+1:]:
-            d = absoluteDistance(xi-xj, yi-yj, zi-zj)
-            hist.Fill(d, d*d)            
-    return hist
+#def histAA(tab):                                #Create Galaxy Pair Histogram
+ #   hist = r.TH1D("%f"%random.random(), " ;Mpc;d^2Eta(d)", 100, 0, 200)
+  #  for i,(xi,yi,zi) in enumerate(tab):
+   #     if i%100==0: print "i =", i
+    #    for xj,yj,zj in tab[i+1:]:
+     #       d = absoluteDistance(xi-xj, yi-yj, zi-zj)
+      #      hist.Fill(d)            
+#    return hist
 
 def histBB(tab):
     hist = r.TH1D("%f"%random.random(), " ;Mpc;d^2Eta(d)", 100, 0, 200)
@@ -74,43 +75,21 @@ def histBB(tab):
         if i%100==0: print "i =", i
         cc = row - bb[i:]
         for d in np.sqrt(np.diag(cc.dot(cc.T))):
-            hist.Fill(d, d*d)
+            hist.Fill(d)            
     return hist
 
 
-def hisTopTri(tab1, tab2):
-    hist = r.TH1D("%f"%random.random(), " ;Mpc;d^2Eta(d)", 100, 0, 200)
-    ab = np.array(tab1)
-    bc = np.array(tab2)
-    for i,rowi in enumerate(ab):
-        if i%100=0: print "i = ", i
-        for j in enumerate(bc):
-            ac = rowi - bc[j:]
-            for d in np.sqrt(np.diag(ac.dot(ac.T))):
-                hist.Fill(d, d*d)
-    return hist
-
-def histBotTri(tab1, tab2):
-    hist = r.TH1D("%f"%random.random(), " ;Mpc;d^2Eta(d)", 100, 0, 200)
-    ab = np.array(tab1)
-    bc = np.array(tab2)
-    for i,rowi in enumerate(ab):
-        if i%100=0: print "i = ", i
-        for j in enumerate(bc):
-            ac = rowi - bc[:j]
-            for d in np.sqrt(np.diag(ac.dot(ac.T))):
-                hist.Fill(d, d*d)
-    return hist
-
-
-
-def openData(filename, npoints = None):
+def openDataFront(filename, nstart = None, nend = None):
     data = fits.getdata(filename, 1)
     table = Table(data)
-    print "Open Table ", filename
-    return [cartesian(row)] for row in table[:npoints]]
+    print "Open Table Front ", filename
+    return [cartesian(row) for row in table[nstart:nend]]
 
-
+def openDataBack(filename, nstart, nend):
+    data = fits.getdata(filename, 1)
+    table = Table(data)
+    print "Open Table Back ", filename
+    return [cartesian(row) for row in table[-nend:-nstart]]
 
 
 
