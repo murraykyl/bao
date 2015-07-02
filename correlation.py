@@ -59,20 +59,20 @@ def absoluteDistance(xd,yd,zd):                 #Define Distances between Galaxi
 
 
 
-#def histAA(tab):                                #Create Galaxy Pair Histogram
- #   hist = r.TH1D("%f"%random.random(), " ;Mpc;d^2Eta(d)", 100, 0, 200)
-  #  for i,(xi,yi,zi) in enumerate(tab):
-   #     if i%100==0: print "i =", i
-    #    for xj,yj,zj in tab[i+1:]:
-     #       d = absoluteDistance(xi-xj, yi-yj, zi-zj)
-      #      hist.Fill(d)            
-#    return hist
+def histAA(tab):                                #Create Galaxy Pair Histogram
+    hist = r.TH1D("%f"%random.random(), " ;Mpc;d^2Eta(d)", 100, 0, 200)
+    for i,(xi,yi,zi) in enumerate(tab):
+        if i%100==0: print "i =", i
+        for xj,yj,zj in tab[i+1:]:
+            d = absoluteDistance(xi-xj, yi-yj, zi-zj)
+            hist.Fill(d)            
+    return hist
 
 def histBB(tab):
-    hist = r.TH1D("%f"%random.random(), " ;Mpc;d^2Eta(d)", 100, 0, 200)
+    hist = r.TH1D("%f"%random.random(), " ;Mpc;d^2Eta(d)", 100, 0, 1000)
     bb = np.array(tab)
     for i,row in enumerate(bb):
-        if i%100==0: print "i =", i
+        if i%500==0: print "i= ", i
         cc = row - bb[i:]
         for d in np.sqrt(np.diag(cc.dot(cc.T))):
             hist.Fill(d)            
@@ -91,6 +91,8 @@ def openDataBack(filename, nstart, nend):
     print "Open Table Back ", filename
     return [cartesian(row) for row in table[-nend:-nstart]]
 
+
+    
 
 
 

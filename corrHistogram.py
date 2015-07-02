@@ -1,7 +1,12 @@
 import ROOT as r
 import correlation
+import argparse
+import random
 
-r.gROOT.SetBatch(1)
+parser = argparse.ArgumentParser(description='Set values')
+parser.add_argument('-i', '--input', type=int, help='nstart number', required=True)
+parser.add_argument('-o', '--output', type=int, help='nend number', required=True)
+args = parser.parse_args() 
 
 def correlationHistogram(histDD, histDpR, histRR):
     histEp = histDD.Clone("histEp")
@@ -13,12 +18,12 @@ def correlationHistogram(histDD, histDpR, histRR):
     return histEp
 
 if __name__=="__main__":
-    nstart = 1000
-    nend = 3000
-    dataDDnf = correlation.openDataFront('../Downloads/galaxies_DR9_CMASS_North.fits', nstart, nend)
-    dataRRnf = correlation.openDataFront('../Downloads/randoms_DR9_CMASS_North.fits', nstart, nend)
-    dataDDnb = correlation.openDataBack('../Downloads/galaxies_DR9_CMASS_North.fits', nstart, nend)
-    dataRRnb = correlation.openDataBack('../Downloads/randoms_DR9_CMASS_North.fits', nstart, nend)
+    nstart = args.input
+    nend = args.output
+    dataDDnf = correlation.openDataFront('galaxies_DR9_CMASS_North.fits', nstart, nend)
+    dataRRnf = correlation.openDataFront('randoms_DR9_CMASS_North.fits', nstart, nend)
+    dataDDnb = correlation.openDataBack('galaxies_DR9_CMASS_North.fits', nstart, nend)
+    dataRRnb = correlation.openDataBack('randoms_DR9_CMASS_North.fits', nstart, nend)
 #    dataDDs = correlation.openData('../Downloads/galaxies_DR9_CMASS_South.fits', npoints)
 #    dataRRs = correlation.openData('../Downloads/randoms_DR9_CMASS_South.fits', npoints)
     print "Concat Now"
@@ -48,9 +53,9 @@ if __name__=="__main__":
 
     corrHistb = correlationHistogram(histDDn, histDpRn, histRRn)
 #    corrHista = correlationHistogram(histDDna, histDpRna, histRRna)
-                                    
+
     c = r.TCanvas()
-    outFileName = "Correlation FunctionC.pdf"
+    outFileName = "CorrelationFunction%s.pdf" %random.random()
     c.Print(outFileName + "[")
     corrHistb.Draw()
     c.Print(outFileName)
