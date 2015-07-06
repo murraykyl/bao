@@ -31,7 +31,6 @@ for row in t:
    wsys = row['weight_sdc']
    w = wfkp*wsys*(wrf + wcp + 1)
    h.Fill(z, w)
-
 #print "Filling Random Histogram"
 
 #for row in t1:

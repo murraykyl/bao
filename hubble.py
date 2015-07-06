@@ -2,10 +2,20 @@ import math
 from scipy import integrate
 import numpy as np
 
+#Current cosmological densities for curvature, matter, radiation, and lambda, respectively
 omega = {"K0":0,
          "M0":0.33,
          "R0":0,
          "L0":0.67}
+
+#Current Speed of light in km/s
+c = 3e5
+#Current dimensionless scale factor
+h = 0.72
+#Current Hubble Constant in km/s/Mpc
+H0 = 100*h
+#Current Hubble Distance in Mpc
+Dh = 3000/h
 
 def hubbleRatio(z):
     """This is an example of a function."""
@@ -15,14 +25,17 @@ def hubbleRatio(z):
                      omega["L0"])
 
 def comovingDistance(z):
-    return integrate.quad(lambda x: 1./hubbleRatio(x),
-                          0, z)[0]
+    return (integrate.quad(lambda x: 1./hubbleRatio(x),
+                           0, z)[0]/H0) * c
 
 def angularDistance(z):
-    return comovingDistance(z)/(1+z)
+    return comovingDistance(z)/((1+z)*H0)
 
 def luminosityDistance(z):
     return comovingDistance(z)*(1+z)
+
+def comovingAngularDiameterDistance(z):
+    return (c/H0) * comovingDistance(z)
 
 class ComovingDistance(object):
     """Lookup table for comoving distance"""
