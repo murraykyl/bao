@@ -20,10 +20,10 @@ def correlationHistogram(histDD, histDpR, histRR):
 if __name__=="__main__":
     nstart = args.input
     nend = args.output
-    dataDDnf = correlation.openDataFront('galaxies_DR9_CMASS_North.fits', nstart, nend)
-    dataRRnf = correlation.openDataFront('randoms_DR9_CMASS_North.fits', nstart, nend)
-    dataDDnb = correlation.openDataBack('galaxies_DR9_CMASS_North.fits', nstart, nend)
-    dataRRnb = correlation.openDataBack('randoms_DR9_CMASS_North.fits', nstart, nend)
+    dataDDnf = correlation.openDataFront('data/galaxies_DR9_CMASS_North.fits', nstart, nend)
+    dataRRnf = correlation.openDataFront('data/randoms_DR9_CMASS_North.fits', nstart, nend)
+    dataDDnb = correlation.openDataBack('data/galaxies_DR9_CMASS_North.fits', nstart, nend)
+    dataRRnb = correlation.openDataBack('data/randoms_DR9_CMASS_North.fits', nstart, nend)
 #    dataDDs = correlation.openData('../Downloads/galaxies_DR9_CMASS_South.fits', npoints)
 #    dataRRs = correlation.openData('../Downloads/randoms_DR9_CMASS_South.fits', npoints)
     print "Concat Now"

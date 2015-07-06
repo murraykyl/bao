@@ -1,0 +1,9 @@
+Please locate the following files in the data/ directory:
+
+ * galaxies_DR9_CMASS_North.fits
+ * galaxies_DR9_CMASS_South.fits
+ * randoms_DR9_CMASS_North.fits
+ * randoms_DR9_CMASS_South.fits
+
+As of July 6, 2015, these files can be found at:
+http://data.sdss3.org/sas/dr9/boss/lss/
