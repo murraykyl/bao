@@ -93,17 +93,20 @@ def lineByLineAA(filename, nStart, nEnd):
 
 if __name__=="__main__":
 
-    filename1 = 
-    filename2 = 
-    if filename1 = filename2:
+    filename1 = 'data/randoms_DR9_CMASS_North.fits'
+    filename2 = 'data/galaxies_DR9_CMASS_North.fits'
+    sameFile = filename1 == filename2
+    if sameFile:
         lineHist = lineByLineAA(filename1, 0, 10)    
     else:
         doubleHist = lineByLineAB(filename1, filename2, 0, 10)
     
     c = r.TCanvas()
     outFileName = "LineByLine%s.pdf" %random.random()
-    lineHist.Draw()
-    doubleHist.Draw()
+    if sameFile:
+        lineHist.Draw()
+    else:
+        doubleHist.Draw()
     c.Print(outFileName)
 
 
