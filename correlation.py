@@ -6,6 +6,7 @@ import numpy as np
 from astropy.io import fits
 from astropy.table import Table
 import itertools
+import common
 
 c = 3e5     #km/s
 h = 0.7     #dimensionless universe scale
@@ -78,13 +79,26 @@ def histBB(tab):
             hist.Fill(d)            
     return hist
 
+    
 
-def openData(filename, nstart = None, nend = None):
+def openData(filename, nstart = None, nend = None, grid = None):
     data = fits.getdata(filename, 1)
     table = Table(data)
     print "Open Table ", filename
-    return [cartesian(row) for row in table[nstart:nend]]
-
+    if grid == None:
+        return [cartesian(row) for row in table[nstart:nend]]
+    mindec = math.floor(np.min(table['dec']))
+    maxdec = math.ceil(np.max(table['dec']))
+    minra = math.floor(np.min(table['ra']))
+    maxra = math.ceil(np.max(table['ra']))
+    print mindec, maxdec, minra, maxra
+    triplets = [[[] for j in range(grid[1])] for i in range(grid[0])]
+    for row in table:
+        i = common.binNumber(grid[0], mindec, maxdec, row['dec'])
+        j = common.binNumber(grid[1], minra, maxra, row['ra'])
+        triplets[i][j].append(cartesian(row) + (row['ra'], row['dec']))
+    return triplets
+        
 
 
     
@@ -104,3 +118,6 @@ if __name__=="__main__":                        #Test Functions
         a = distanceMeasure(w)
         b = cd(w)
         assert abs(a-b) < 1e-4
+
+    openData('data/galaxies_DR9_CMASS_North.fits', grid = (6,20))
+    

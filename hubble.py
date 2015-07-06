@@ -1,6 +1,7 @@
 import math
 from scipy import integrate
 import numpy as np
+import common
 
 #Current cosmological densities for curvature, matter, radiation, and lambda, respectively
 omega = {"K0":0,
@@ -48,7 +49,7 @@ class ComovingDistance(object):
     def __call__(self, z):
         lo = self.lookup[0][0]
         hi = self.lookup[-1][0]
-        i = int( (len(self.lookup)-1) * (z - lo) / (hi - lo))
+        i = common.binNumber(len(self.lookup), lo, hi, z)
         x0,y0 = self.lookup[i]
         x1,y1 = self.lookup[i+1]
         return y0 + (z - x0) * (y1 - y0) / (x1 - x0)
@@ -65,4 +66,4 @@ if __name__=="__main__":
         z = uniform(0.4, 0.7)
         a = comovingDistance(z)
         b = cd(z)
-        assert abs(a-b) < 1e-6
+        assert abs(a-b) < 1e-4
