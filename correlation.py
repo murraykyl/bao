@@ -79,17 +79,12 @@ def histBB(tab):
     return hist
 
 
-def openDataFront(filename, nstart = None, nend = None):
+def openData(filename, nstart = None, nend = None):
     data = fits.getdata(filename, 1)
     table = Table(data)
-    print "Open Table Front ", filename
+    print "Open Table ", filename
     return [cartesian(row) for row in table[nstart:nend]]
 
-def openDataBack(filename, nstart, nend):
-    data = fits.getdata(filename, 1)
-    table = Table(data)
-    print "Open Table Back ", filename
-    return [cartesian(row) for row in table[-nend:-nstart]]
 
 
     

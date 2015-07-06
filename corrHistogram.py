@@ -22,38 +22,29 @@ def correlationHistogram(histDD, histDpR, histRR):
 if __name__=="__main__":
     nstart = args.input
     nend = args.output
-    dataDDnf = correlation.openDataFront('data/galaxies_DR9_CMASS_North.fits', nstart, nend)
-    dataRRnf = correlation.openDataFront('data/randoms_DR9_CMASS_North.fits', nstart, nend)
-    dataDDnb = correlation.openDataBack('data/galaxies_DR9_CMASS_North.fits', nstart, nend)
-    dataRRnb = correlation.openDataBack('data/randoms_DR9_CMASS_North.fits', nstart, nend)
+    dataDDn = correlation.openData('data/galaxies_DR9_CMASS_North.fits', nstart, nend)
+    dataRRn = correlation.openData('data/randoms_DR9_CMASS_North.fits', nstart, nend)
 #    dataDDs = correlation.openData('../Downloads/galaxies_DR9_CMASS_South.fits', npoints)
 #    dataRRs = correlation.openData('../Downloads/randoms_DR9_CMASS_South.fits', npoints)
     print "Concat Now"
-    DpRnf = dataDDnf + dataRRnf
-    DpRnb = dataDDnb + dataRRnb
+    DpRn = dataDDn + dataRRn
 #    DpRs = dataDDs + dataRRs
     print "First hist"
-    histDDnf = correlation.histBB(dataDDnf)
-    histDpRnf = correlation.histBB(DpRnf)
-    histRRnf = correlation.histBB(dataRRnf)
-    histDDnb = correlation.histBB(dataDDnb)
-    histDpRnb = correlation.histBB(DpRnb)
-    histRRnb = correlation.histBB(dataRRnb)
+    histDD1 = correlation.histBB(dataDDn)
+    histDpR1 = correlation.histBB(DpRn)
+    histRR1 = correlation.histBB(dataRRn)
 
-    histDDn = histDDnf.Clone("histDDn")
-    histDDn.Reset()
-    histDDn.Add(histDDnf)
-    histDDn.Add(histDDnb)
-    histDpRn = histDDnf.Clone("histDDn")
-    histDpRn.Reset()
-    histDpRn.Add(histDpRnf)
-    histDpRn.Add(histDpRnb)
-    histRRn = histDDnf.Clone("histDDn")
-    histRRn.Reset()
-    histRRn.Add(histRRnf)
-    histRRn.Add(histRRnb)
+    histDD = histDD1.Clone("histDDn")
+    histDD.Reset()
+    histDD.Add(histDD1)
+    histDpR = histDD1.Clone("histDDn")
+    histDpR.Reset()
+    histDpR.Add(histDpR1)
+    histRR = histDD1.Clone("histDDn")
+    histRR.Reset()
+    histRR.Add(histRR1)
 
-    corrHistb = correlationHistogram(histDDn, histDpRn, histRRn)
+    corrHistb = correlationHistogram(histDD, histDpR, histRR)
 #    corrHista = correlationHistogram(histDDna, histDpRna, histRRna)
 
     c = r.TCanvas()
@@ -61,11 +52,11 @@ if __name__=="__main__":
     c.Print(outFileName + "[")
     corrHistb.Draw()
     c.Print(outFileName)
-    histDDnb.Draw()
+    histDD.Draw()
     c.Print(outFileName)
-    histRRnb.Draw()
+    histRR.Draw()
     c.Print(outFileName)
-    histDpRnb.Draw()
+    histDpR.Draw()
     c.Print(outFileName)
     c.Print(outFileName + "]")
 
