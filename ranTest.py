@@ -69,7 +69,7 @@ def randomChoose(tab, nPoints = 1000):
     #return xn, yn, zn
 
 def openTab(filename):
-    data = fits.getdata('galaxies_DR9_CMASS_North.fits', 1)
+    data = fits.getdata('data/galaxies_DR9_CMASS_North.fits', 1)
     table = Table(data)
     return [cartesian(row) for row in table]
 
@@ -92,7 +92,7 @@ def poissonDist(n, theta, x):
 
 
 if __name__=='__main__':
-    data = fits.getdata('galaxies_DR9_CMASS_North.fits', 1)
+    data = fits.getdata('data/galaxies_DR9_CMASS_North.fits', 1)
     table = Table(data)
     print "Open Table"
-    print averageNumber(openTab('galaxies_DR9_CMASS_North.fits'), table)
+    print averageNumber(openTab('data/galaxies_DR9_CMASS_North.fits'), table)
