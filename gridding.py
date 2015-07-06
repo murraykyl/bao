@@ -45,8 +45,8 @@ def renameData(table):
     return [correlation.cartesian(row) for row in table]
 
 if __name__=="__main__":
-    td1 = cuts(resize(openTable('galaxies_DR9_CMASS_North.fits')), 205, 207, 0, 2)
-    tr1 = cuts(openTable('randoms_DR9_CMASS_North.fits'), 205, 207, 0, 2)
+    td1 = cuts(resize(openTable('data/galaxies_DR9_CMASS_North.fits')), 205, 207, 0, 2)
+    tr1 = cuts(openTable('data/randoms_DR9_CMASS_North.fits'), 205, 207, 0, 2)
     tdpr1 = vstack([td1, tr1])
     td = renameData(td1)
     tdpr = renameData(tdpr1)
