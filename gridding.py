@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 from astropy.io import fits
 from astropy.table import Table, vstack
 import numpy as np

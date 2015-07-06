@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import numpy as np
 from astropy.io import fits
 from astropy.table import Table
@@ -6,12 +8,12 @@ import ROOT as r
 print "Starting Now"
 
 r.gROOT.SetBatch(1)
-data = fits.getdata('../Downloads/galaxies_DR9_CMASS_North.fits', 1)
+data = fits.getdata('data/galaxies_DR9_CMASS_North.fits', 1)
 t = Table(data)
 
 print "Opened First Table"
 
-#data1 = fits.getdata('../Downloads/randoms_DR9_CMASS_North.fits', 1)
+#data1 = fits.getdata('data/randoms_DR9_CMASS_North.fits', 1)
 #t1 = Table(data1)
 
 #print "Opened Second Table"
@@ -31,7 +33,6 @@ for row in t:
    wsys = row['weight_sdc']
    w = wfkp*wsys*(wrf + wcp + 1)
    h.Fill(z, w)
-
 #print "Filling Random Histogram"
 
 #for row in t1:
