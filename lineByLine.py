@@ -8,6 +8,7 @@ from astropy.io import fits
 from astropy.table import Table
 import ROOT as r
 import common
+import correlation
 
 def lineByLineAB(filename1, filename2, nStart, nEnd):
     hist = r.TH1D("%f"%random.random(), " ;Mpc;Eta(d)", 100, 0, 5000)
@@ -45,7 +46,7 @@ def lineByLineAA(filename, nStart, nEnd):
 if __name__=="__main__":
 
     filename1 = 'data/galaxies_DR9_CMASS_North.fits'
-    filename2 = 'data/galaxies_DR9_CMASS_North.fits'
+    filename2 = 'data/randoms_DR9_CMASS_North.fits'
     sameFile = filename1 == filename2
     if sameFile:
         lineHist = lineByLineAA(filename1, 0, 10)    

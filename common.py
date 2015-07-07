@@ -67,4 +67,12 @@ def cartesian(row):                             #Convert to Cartesian Coordinate
 def absoluteDistance(xd,yd,zd):                 #Define Distances between Galaxies
     return math.sqrt(xd**2 + yd**2 + zd**2)
 
+def correlationHistogram(histDD, histDpR, histRR):
+    histEp = histDD.Clone("histEp")
+    histEp.Reset()
+    histEp.Add(histDD, 3)
+    histEp.Add(histRR, 3)
+    histEp.Add(histDpR, -2)
+    histEp.Divide(histRR)
+    return histEp
 

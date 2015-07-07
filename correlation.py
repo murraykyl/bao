@@ -21,9 +21,9 @@ def histBB(tab):
     bb = np.array(tab)
     for i,row in enumerate(bb):
         if i%500==0: print "i= ", i
-        cc = row - bb[i:]
+        cc = (row - bb[i:]).T[:3].T
         for d in np.sqrt(np.diag(cc.dot(cc.T))):
-            hist.Fill(d)            
+            hist.Fill(d, d*d)
     return hist
 
 def openData(filename, nstart = None, nend = None, grid = None):
@@ -37,17 +37,48 @@ def openData(filename, nstart = None, nend = None, grid = None):
     minra = math.floor(np.min(table['ra']))
     maxra = math.ceil(np.max(table['ra']))
     print (mindec, maxdec), (minra, maxra)
-    triplets = [[[] for j in range(grid[1])] for i in range(grid[0])]
+    quints = [[[] for j in range(grid[1])] for i in range(grid[0])]
     for row in table:
         i = common.binNumber(grid[0], mindec, maxdec, row['dec'])
         j = common.binNumber(grid[1], minra, maxra, row['ra'])
-        triplets[i][j].append(common.cartesian(row) + (row['ra'], row['dec']))
-    return triplets
+        quints[i][j].append(common.cartesian(row) + (row['ra'], row['dec']))
+    return quints
         
+def cellPlotting(quints):
+    hist = r.TH2D("%f"%random.random(), " ;RA;Dec", 100, 108, 264, 100, -4, 57)
+    M = quints
+    for k in range(len(M)):
+        hist.Fill(M[k][3], M[k][4])
+    return hist
+
+
+
+
+
 
 if __name__=="__main__":                        #Test Functions
     print common.hubbleRatio(.5)
     print common.absoluteDistance(12-7, 7-3, 9+17)
 
-    openData('data/galaxies_DR9_CMASS_North.fits', grid = (6,20))
-    
+    grid = (6, 20)
+    dat = openData('data/galaxies_DR9_CMASS_North.fits', grid = (6, 20))[3][3]
+    histDD = histBB(dat)
+    rand = openData('data/randoms_DR9_CMASS_North.fits', grid = (6, 20))[3][3][::10]
+    histRR = histBB(rand)
+    histDR = histBB(dat+rand)
+    histEp = common.correlationHistogram(histDD, histDR, histRR)
+
+    c = r.TCanvas()
+    for h in [histDD, histRR, histDR, histEp]: h.Scale(1./h.Integral())
+    histRR.SetLineColor(r.kRed)
+    histDR.SetLineColor(r.kBlue)
+    histEp.SetLineColor(r.kGreen)
+    histDD.Draw()
+    histRR.Draw("same")
+    histDR.Draw("same")
+    c.Print("CorrelationHistogramDatRan.pdf")
+    histEp.Draw()
+    c.Print("CorrelationHistogramTotal.pdf")
+    histDD.Divide(histRR)
+    histDD.Draw()
+    c.Print("CorrelationDDRR.pdf")
