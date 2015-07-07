@@ -17,13 +17,13 @@ def histAA(tab):                                #Create Galaxy Pair Histogram
     return hist
 
 def histBB(tab):
-    hist = r.TH1D("%f"%random.random(), " ;Mpc;d^2Eta(d)", 100, 0, 1000)
+    hist = r.TH1D("%f"%random.random(), " ;Mpc;d^2Eta(d)", 200, 0, 1000)
     bb = np.array(tab)
     for i,row in enumerate(bb):
         if i%500==0: print "i= ", i
         cc = (row - bb[i:]).T[:3].T
         for d in np.sqrt(np.diag(cc.dot(cc.T))):
-            hist.Fill(d, d*d)
+            hist.Fill(d)
     return hist
 
 def openData(filename, nstart = None, nend = None, grid = None):
@@ -65,17 +65,20 @@ if __name__=="__main__":                        #Test Functions
     histDD = histBB(dat)
     rand = openData('data/randoms_DR9_CMASS_North.fits', grid = (6, 20))[3][3][::10]
     histRR = histBB(rand)
-    histDR = histBB(dat+rand)
-    histEp = common.correlationHistogram(histDD, histDR, histRR)
+    histDpR = histBB(dat+rand)
+    histDR = histDpR.Clone()
+    histDR.Add(histDD, -1)
+    histDR.Add(histRR, -1)
+    for h in [histDD, histRR, histDR]: h.Scale(1./h.Integral())
+    histEp = common.correlationHistogram(histDD, histDR, histRR)    
 
     c = r.TCanvas()
-    for h in [histDD, histRR, histDR, histEp]: h.Scale(1./h.Integral())
     histRR.SetLineColor(r.kRed)
     histDR.SetLineColor(r.kBlue)
     histEp.SetLineColor(r.kGreen)
     histDD.Draw()
     histRR.Draw("same")
-    histDR.Draw("same")
+    histDpR.Draw("same")
     c.Print("CorrelationHistogramDatRan.pdf")
     histEp.Draw()
     c.Print("CorrelationHistogramTotal.pdf")
