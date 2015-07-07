@@ -72,7 +72,7 @@ if __name__=="__main__":                        #Test Functions
     for h in [histDD, histRR, histDR]: h.Scale(1./h.Integral())
     histEp = common.correlationHistogram(histDD, histDR, histRR)    
 
-    tfile = r.TFile.Open("CorrelationFunctionHistograms")
+    tfile = r.TFile.Open("CorrelationFunctionHistograms","NEW")
     histDD.Write()
     histRR.Write()
     histDpR.Write()
