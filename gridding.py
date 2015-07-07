@@ -6,7 +6,7 @@ import numpy as np
 import correlation
 import ROOT as r 
 import random
-
+import common
 
 def openTable(filename):
     data = fits.getdata(filename, 1)
@@ -44,7 +44,7 @@ def correlationHistogram(histDD, histDpR, histRR):
     return histEp
 
 def renameData(table):
-    return [correlation.cartesian(row) for row in table]
+    return [common.cartesian(row) for row in table]
 
 if __name__=="__main__":
     td1 = cuts(resize(openTable('data/galaxies_DR9_CMASS_North.fits')), 205, 207, 0, 2)
