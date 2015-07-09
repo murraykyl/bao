@@ -52,18 +52,14 @@ def cellPlotting(quints):
     return hist
 
 
+if __name__=="__main__":                       
 
+    outdir = "output/"
 
-
-
-if __name__=="__main__":                        #Test Functions
-    print common.hubbleRatio(.5)
-    print common.absoluteDistance(12-7, 7-3, 9+17)
-
-    grid = (6, 20)
-    dat = openData('data/galaxies_DR9_CMASS_North.fits', grid = (6, 20))[3][3]
+    grid = (4, 5)
+    dat = openData('data/galaxies_DR9_CMASS_North.fits', grid = (4, 5))[3][3]
     histDD = histBB(dat)
-    rand = openData('data/randoms_DR9_CMASS_North.fits', grid = (6, 20))[3][3][::10]
+    rand = openData('data/randoms_DR9_CMASS_North.fits', grid = (4, 5))[3][3][::10]
     histRR = histBB(rand)
     histDpR = histBB(dat+rand)
     histDR = histDpR.Clone()
@@ -72,7 +68,7 @@ if __name__=="__main__":                        #Test Functions
     for h in [histDD, histRR, histDR]: h.Scale(1./h.Integral())
     histEp = common.correlationHistogram(histDD, histDR, histRR)    
 
-    tfile = r.TFile.Open("CorrelationFunctionHistograms","NEW")
+    tfile = r.TFile.Open("CorrelationFunctionHistograms.root")
     histDD.Write()
     histRR.Write()
     histDpR.Write()
