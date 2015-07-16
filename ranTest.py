@@ -41,9 +41,25 @@ def averageNumber(filename, tab):
 def poissonDist(n, x):
     return ((n**x)*(math.e**(-n)))/math.factorial(x)
 
-def localize():
-    pass
+def localize(list):
+    local = []
+    x = -list[0][0]
+    y = -list[0][1]
+    z = -list[0][2]
+    for (xi,yi,zi) in list:
+        Q = (xi+x,yi+y,zi+z)
+        local.append(Q)
+    return local
 
+def spherical(list):
+    sphere = []
+    r = 150
+    for xi,yi,zi in list:
+        theta = math.acos(zi/r)
+        phi = math.acos((xi/r)*math.cos(theta))
+        P = (r, theta, phi)
+        sphere.append(P)
+    return sphere
 
 
 if __name__=='__main__':
@@ -52,5 +68,6 @@ if __name__=='__main__':
     print "Open Table"
     Ave = averageNumber(openTab('data/galaxies_DR9_CMASS_North.fits'), table)
     print Ave
-
-
+    print localize(Ave)
+    print spherical(localize(Ave))
+    
