@@ -27,23 +27,30 @@ def openTab(filename):
     return [common.cartesian(row) for row in table]
 
 def averageNumber(filename, tab):
+    Ran = randomChoose(tab, 1)
     Ave = []
-    for xi,yi,zi in randomChoose(tab, 10):
+    for xi,yi,zi in Ran:
         for xj,yj,zj in openTab(filename):
             d = common.absoluteDistance(xj-xi, yj-yi, zj-zi)
-        if d == 150:
-            Ave.append(xj)
-        else:
-            pass
-    return len(Ave)
+            if 149 < d < 151:
+                Ave.append((xj,yj,zj))
+            else:
+                pass
+    return Ran + Ave
 
-def poissonDist(n, theta, x):
-    aveN = n*theta
-    return ((aveN**x)*(math.e**(-aveN)))/math.factorial(x)
+def poissonDist(n, x):
+    return ((n**x)*(math.e**(-n)))/math.factorial(x)
+
+def localize():
+    pass
+
 
 
 if __name__=='__main__':
     data = fits.getdata('data/galaxies_DR9_CMASS_North.fits', 1)
     table = Table(data)
     print "Open Table"
-    print averageNumber(openTab('data/galaxies_DR9_CMASS_North.fits'), table)
+    Ave = averageNumber(openTab('data/galaxies_DR9_CMASS_North.fits'), table)
+    print Ave
+
+
