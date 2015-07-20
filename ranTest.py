@@ -8,26 +8,20 @@ from astropy.table import Table
 from scipy import integrate
 import common
 
+def openTab(filename):
+    data = fits.getdata('data/galaxies_DR9_CMASS_North.fits', 1)
+    table = Table(data)
+    return [common.cartesian(row) for row in table]
+
 def randomChoose(tab, nPoints = 1000):            
     list = []
     for row in tab:
         w = common.cartesian(row)
         list.append(w)
     return random.sample(list, nPoints)
-    
-#def circleGal(p = 150):
- #   list = randomChoose(tab, nPoints)
-  #  for xi, yi, zi in list:
-   #     p**2 = (xn-xi)**2 + (yn-yi)**2 + (zn-zi)**2
-    #return xn, yn, zn
 
-def openTab(filename):
-    data = fits.getdata('data/galaxies_DR9_CMASS_North.fits', 1)
-    table = Table(data)
-    return [common.cartesian(row) for row in table]
-
-def averageNumber(filename, tab):
-    Ran = randomChoose(tab, 1)
+def averageNumber(filename, tab, tuple):
+    Ran = [tuple]
     Ave = []
     for xi,yi,zi in Ran:
         for xj,yj,zj in openTab(filename):
@@ -66,8 +60,9 @@ if __name__=='__main__':
     data = fits.getdata('data/galaxies_DR9_CMASS_North.fits', 1)
     table = Table(data)
     print "Open Table"
-    Ave = averageNumber(openTab('data/galaxies_DR9_CMASS_North.fits'), table)
-    print Ave
-    print localize(Ave)
-    print spherical(localize(Ave))
+    Ran = randomChoose(table, 20)
+    print Ran
+    for tuple in Ran:
+        Ave = averageNumber(openTab('data/galaxies_DR9_CMASS_North.fits'), table, tuple)
+        print spherical(localize(Ave))
     
