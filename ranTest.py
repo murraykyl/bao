@@ -28,6 +28,8 @@ def averageNumber(filename, tab, tuple):
             d = common.absoluteDistance(xj-xi, yj-yi, zj-zi)
             if 149 < d < 151:
                 Ave.append((xj,yj,zj))
+            if 249 < d < 251:
+                Ave. append((xj,yj,zj))
             else:
                 pass
     return Ran + Ave
@@ -47,10 +49,10 @@ def localize(list):
 
 def spherical(list):
     sphere = []
-    r = 150
     for xi,yi,zi in list:
-        theta = math.acos(zi/r)
-        phi = math.acos((xi/r)*math.cos(theta))
+        r = math.sqrt(xi**2 + yi**2 + zi**2)
+        theta = math.atan(yi/xi)
+        phi = math.atan(math.sqrt(xi**2+yi**2)/zi)
         P = (r, theta, phi)
         sphere.append(P)
     return sphere
@@ -60,7 +62,7 @@ if __name__=='__main__':
     data = fits.getdata('data/galaxies_DR9_CMASS_North.fits', 1)
     table = Table(data)
     print "Open Table"
-    Ran = randomChoose(table, 20)
+    Ran = randomChoose(table, 10)
     print Ran
     for tuple in Ran:
         Ave = averageNumber(openTab('data/galaxies_DR9_CMASS_North.fits'), table, tuple)
