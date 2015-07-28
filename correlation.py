@@ -56,10 +56,10 @@ if __name__=="__main__":
 
     outdir = "output/"
 
-    grid = (4, 5)
-    dat = openData('data/galaxies_DR9_CMASS_North.fits', grid = (4, 5))[2][2]
+    grid = (6, 20)
+    dat = openData('data/galaxies_DR9_CMASS_North.fits', grid = (6, 20))[3][6]
     histDD = histBB(dat)
-    rand = openData('data/randoms_DR9_CMASS_North.fits', grid = (4, 5))[2][2]
+    rand = openData('data/randoms_DR9_CMASS_North.fits', grid = (6, 20))[3][6]
     histRR = histBB(rand)
     histDpR = histBB(dat+rand)
     histDR = histDpR.Clone()
