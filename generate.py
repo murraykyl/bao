@@ -61,11 +61,11 @@ def spherical(list):
 
 
 if __name__=='__main__':
-    data = fits.getdata('data/galaxies_DR9_CMASS_North.fits', 1)
+    data = fits.getdata('data/randoms_DR9_CMASS_North.fits', 1)
     table = Table(data)
     print "Open Table"
-    split = splitTable(table, openTab('data/galaxies_DR9_CMASS_North.fits'))
-    ran = randomChoose(split[1], 3)
+    split = splitTable(table, openTab('data/randoms_DR9_CMASS_North.fits'))
+    ran = randomChoose(split[1], 10)
     print ran
     slist = []
     for tup in ran:
