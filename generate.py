@@ -13,9 +13,9 @@ def openTab(filename):
     table = Table(data)
     return [common.cartesian(row) for row in table]
 
-def splitTable(list):
+def splitTable(tab, list):
     r1 = random.sample(list, len(list)/3)
-    r2 = random.sample(list, len(list)/3)
+    r2 = random.sample(tab, len(list)/3)
     r3 = random.sample(list, len(list)/3)
     return r1, r2, r3
 
@@ -64,12 +64,13 @@ if __name__=='__main__':
     data = fits.getdata('data/galaxies_DR9_CMASS_North.fits', 1)
     table = Table(data)
     print "Open Table"
-    split = splitTable(table)
-    ran = randomChoose(split[0], 2)
+    split = splitTable(table, openTab('data/galaxies_DR9_CMASS_North.fits'))
+    ran = randomChoose(split[1], 3)
     print ran
     slist = []
     for tup in ran:
-        ave = averageNumber(openTab('data/galaxies_DR9_CMASS_North.fits'), tup)
+        ave = averageNumber(split[0], tup)
         slist.append(ave)
-        print ave
+    print slist + split[0]
+    
 
