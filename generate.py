@@ -13,8 +13,13 @@ def openTab(filename):
     table = Table(data)
     return [common.cartesian(row) for row in table]
 
+def splitTable(list):
+    r1 = random.sample(list, len(list)/3)
+    r2 = random.sample(list, len(list)/3)
+    r3 = random.sample(list, len(list)/3)
+    return r1, r2, r3
+
 def randomChoose(tab, nPoints = 1000):            
-    subset = []
     list = []
     subset = random.sample(tab, nPoints)
     for row in subset:
@@ -22,7 +27,7 @@ def randomChoose(tab, nPoints = 1000):
         list.append(w)
     return list
 
-def averageNumber(list, tab, tup):
+def averageNumber(list, tup):
     ran = [tup]
     ave = []
     for xi,yi,zi in ran:
@@ -33,9 +38,6 @@ def averageNumber(list, tab, tup):
             else:
                 pass
     return ran + ave
-
-def poissonDist(n, x):
-    return ((n**x)*(math.e**(-n)))/math.factorial(x)
 
 def localize(list):
     local = []
@@ -62,9 +64,12 @@ if __name__=='__main__':
     data = fits.getdata('data/galaxies_DR9_CMASS_North.fits', 1)
     table = Table(data)
     print "Open Table"
-    ran = randomChoose(table, 20)
+    split = splitTable(table)
+    ran = randomChoose(split[0], 2)
     print ran
+    slist = []
     for tup in ran:
-        ave = averageNumber(openTab('data/galaxies_DR9_CMASS_North.fits'), table, tup)
-        print spherical(localize(ave))
-    
+        ave = averageNumber(openTab('data/galaxies_DR9_CMASS_North.fits'), tup)
+        slist.append(ave)
+        print ave
+
