@@ -71,8 +71,8 @@ def correlationHistogram(histDD, histDR, histRR):
     histEp = histDD.Clone("histEp")
     histEp.Reset()
     histEp.Add(histDD, 1)
-    histEp.Add(histRR, 1)
-    histEp.Add(histDR, -2)
+#    histEp.Add(histRR, 1)
+ #   histEp.Add(histDR, -2)
     histEp.Divide(histRR)
     return histEp
 

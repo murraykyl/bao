@@ -7,6 +7,7 @@ from astropy.io import fits
 from astropy.table import Table
 from scipy import integrate
 import common
+import itertools
 
 def openTab(filename):
     data = fits.getdata(filename, 1)
@@ -59,6 +60,11 @@ def spherical(list):
         sphere.append(P)
     return sphere
 
+def combineLists(list_of_lists):
+    listNotMerged = list_of_lists
+    merged = list(itertools.chain.from_iterable(listNotMerged))
+    return merged
+                  
 
 if __name__=='__main__':
     data = fits.getdata('data/randoms_DR9_CMASS_North.fits', 1)
@@ -71,6 +77,5 @@ if __name__=='__main__':
     for tup in ran:
         ave = averageNumber(split[0], tup)
         slist.append(ave)
-    print slist + split[0]
-    
-
+    E = slist + [split[0]]
+    print combineLists(E)

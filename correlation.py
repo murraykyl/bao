@@ -6,10 +6,11 @@ from astropy.io import fits
 from astropy.table import Table
 import itertools
 import common
+import generate
 
-def histAA(tab):                                #Create Galaxy Pair Histogram
+def histAA(list):                                #Create Galaxy Pair Histogram
     hist = r.TH1D("%f"%random.random(), " ;Mpc;d^2Eta(d)", 100, 0, 200)
-    for i,(xi,yi,zi) in enumerate(tab):
+    for (xi,yi,zi) in list:
         if i%100==0: print "i =", i
         for xj,yj,zj in tab[i+1:]:
             d = common.absoluteDistance(xi-xj, yi-yj, zi-zj)
@@ -54,19 +55,31 @@ def cellPlotting(quints):
 
 if __name__=="__main__":                       
 
+    data = fits.getdata('data/randoms_DR9_CMASS_North.fits', 1)
+    tabl = Table(data)
+    print "Open Table"
+    split = generate.splitTable(tabl, generate.openTab('data/randoms_DR9_CMASS_North.fits'))
+    rando = generate.randomChoose(split[1], 10)
+    print rando
+    slist = []
+    for tup in rando:
+        ave = generate.averageNumber(split[0], tup)
+        slist.append(ave)
+    dataF = generate.combineLists(slist + [split[0]])
+
     outdir = "output/"
 
     grid = (6, 20)
-    dat = openData('data/galaxies_DR9_CMASS_North.fits', grid = (6, 20))[3][6]
-    histDD = histBB(dat)
+#    dat = openData('data/galaxies_DR9_CMASS_North.fits', grid = (6, 20))[3][6]
+    histDD = histBB(dataF)
     rand = openData('data/randoms_DR9_CMASS_North.fits', grid = (6, 20))[3][6]
     histRR = histBB(rand)
-    histDpR = histBB(dat+rand)
-    histDR = histDpR.Clone()
-    histDR.Add(histDD, -1)
-    histDR.Add(histRR, -1)
-    for h in [histDD, histRR, histDR]: h.Scale(1./h.Integral())
-    histEp = common.correlationHistogram(histDD, histDR, histRR)    
+#    histDpR = histBB(dat+rand)
+ #   histDR = histDpR.Clone()
+  #  histDR.Add(histDD, -1)
+   # histDR.Add(histRR, -1)
+    for h in [histDD, histRR]: h.Scale(1./h.Integral())
+    histEp = common.correlationHistogram(histDD, histRR)    
 
     tfile = r.TFile.Open("CorrelationFunctionHistograms.root")
     histDD.Write()
@@ -81,7 +94,6 @@ if __name__=="__main__":
     histEp.SetLineColor(r.kGreen)
     histDD.Draw()
     histRR.Draw("same")
-    histDpR.Draw("same")
     c.Print("CorrelationHistogramDatRan.pdf")
     histEp.Draw()
     c.Print("CorrelationHistogramTotal.pdf")
