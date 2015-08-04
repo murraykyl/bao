@@ -66,14 +66,14 @@ if __name__=="__main__":
         ave = generate.averageNumber(split[0], tup)
         slist.append(ave)
     dataF = generate.combineLists(slist + [split[0]])
-
+    dataR = split[2]
     outdir = "output/"
 
     grid = (6, 20)
 #    dat = openData('data/galaxies_DR9_CMASS_North.fits', grid = (6, 20))[3][6]
     histDD = histBB(dataF)
-    rand = openData('data/randoms_DR9_CMASS_North.fits', grid = (6, 20))[3][6]
-    histRR = histBB(rand)
+#    rand = openData('data/randoms_DR9_CMASS_North.fits', grid = (6, 20))[3][6]
+    histRR = histBB(dataR)
 #    histDpR = histBB(dat+rand)
  #   histDR = histDpR.Clone()
   #  histDR.Add(histDD, -1)
