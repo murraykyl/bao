@@ -5,14 +5,14 @@ import common
 
 #Current cosmological densities for curvature, matter, radiation, and lambda, respectively
 omega = {"K0":0,
-         "M0":0.33,
+         "M0":0.3183,
          "R0":0,
-         "L0":0.67}
+         "L0":0.6817}
 
 #Current Speed of light in km/s
 c = 3e5
 #Current dimensionless scale factor
-h = 0.72
+h = 0.6704
 #Current Hubble Constant in km/s/Mpc
 H0 = 100*h
 #Current Hubble Distance in Mpc

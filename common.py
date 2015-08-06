@@ -3,12 +3,12 @@ from scipy import integrate
 import numpy as np
 
 omega = {"K0":0,
-         "M0":0.33,
+         "M0":0.3183,
          "R0":0,
-         "L0":0.67}
+         "L0":0.6817}
 
 c = 3e5
-h = 0.72
+h = 0.6704
 H0 = 100*h
 Dh = 3000/h
 
@@ -67,7 +67,7 @@ def cartesian(row):                             #Convert to Cartesian Coordinate
 def absoluteDistance(xd,yd,zd):                 #Define Distances between Galaxies
     return math.sqrt(xd**2 + yd**2 + zd**2)
 
-def correlationHistogram(histDD, histDR, histRR):
+def correlationHistogram(histDD, histRR):
     histEp = histDD.Clone("histEp")
     histEp.Reset()
     histEp.Add(histDD, 1)

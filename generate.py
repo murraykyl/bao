@@ -17,8 +17,9 @@ def openTab(filename):
 def splitTable(tab, list):
     r1 = random.sample(list, len(list)/3)
     r2 = random.sample(tab, len(list)/3)
+    r2prime = [common.cartesian(row) for row in r2]
     r3 = random.sample(list, len(list)/3)
-    return r1, r2, r3
+    return r1, r2, r3, r2prime
 
 def randomChoose(tab, nPoints = 1000):            
     list = []
@@ -73,9 +74,10 @@ if __name__=='__main__':
     split = splitTable(table, openTab('data/randoms_DR9_CMASS_North.fits'))
     ran = randomChoose(split[1], 10)
     print ran
-    slist = []
-    for tup in ran:
-        ave = averageNumber(split[0], tup)
-        slist.append(ave)
-    E = slist + [split[0]]
-    print combineLists(E)
+    print split[3]
+#    slist = []
+#    for tup in ran:
+ #       ave = averageNumber(split[0], tup)
+  #      slist.append(ave)
+   # E = slist + [split[0]]
+    #print combineLists(E)

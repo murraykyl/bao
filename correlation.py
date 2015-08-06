@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import math
 import ROOT as r
 import random
@@ -63,17 +65,18 @@ if __name__=="__main__":
     print rando
     slist = []
     for tup in rando:
-        ave = generate.averageNumber(split[0], tup)
+        ave = generate.averageNumber(split[3], tup)
         slist.append(ave)
-    dataF = generate.combineLists(slist + [split[0]])
-    dataR = split[2]
+    dataF = random.sample(generate.combineLists(slist + [split[0]]), 2000)
+    dataR = random.sample(split[2], 4000)
+    dataS = random.sample(split[3], 2000)
     outdir = "output/"
 
     grid = (6, 20)
-#    dat = openData('data/galaxies_DR9_CMASS_North.fits', grid = (6, 20))[3][6]
-    histDD = histBB(dataF)
-#    rand = openData('data/randoms_DR9_CMASS_North.fits', grid = (6, 20))[3][6]
-    histRR = histBB(dataR)
+    dat = random.sample(generate.openTab('data/galaxies_DR9_CMASS_North.fits'), 2000)
+    histDD = histBB(dat)
+    rand = random.sample(generate.openTab('data/randoms_DR9_CMASS_North.fits'), 4000)
+    histRR = histBB(rand)
 #    histDpR = histBB(dat+rand)
  #   histDR = histDpR.Clone()
   #  histDR.Add(histDD, -1)
@@ -84,19 +87,19 @@ if __name__=="__main__":
     tfile = r.TFile.Open("CorrelationFunctionHistograms.root")
     histDD.Write()
     histRR.Write()
-    histDpR.Write()
+ #   histDpR.Write()
     histEp.Write()
     tfile.Close()
 
     c = r.TCanvas()
     histRR.SetLineColor(r.kRed)
-    histDR.SetLineColor(r.kBlue)
+#    histDR.SetLineColor(r.kBlue)
     histEp.SetLineColor(r.kGreen)
     histDD.Draw()
     histRR.Draw("same")
-    c.Print("CorrelationHistogramDatRan.pdf")
+    c.Print("CorrelationHistogramDDRR.pdf")
     histEp.Draw()
-    c.Print("CorrelationHistogramTotal.pdf")
-    histDD.Divide(histRR)
-    histDD.Draw()
-    c.Print("CorrelationDDRR.pdf")
+    c.Print("CorrelationHistogramDDTot.pdf")
+
+
+
