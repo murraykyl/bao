@@ -14,6 +14,31 @@ def openTab(filename):
     table = Table(data)
     return [common.cartesian(row) for row in table]
 
+def openData(filename, nstart = None, nend = None, grid = None):
+    data = fits.getdata(filename, 1)
+    table = Table(data)
+    print "Open Table ", filename
+    if grid == None:
+        return [common.cartesian(row) for row in table[nstart:nend]]
+    mindec = math.floor(np.min(table['dec']))
+    maxdec = math.ceil(np.max(table['dec']))
+    minra = math.floor(np.min(table['ra']))
+    maxra = math.ceil(np.max(table['ra']))
+    print (mindec, maxdec), (minra, maxra)
+    quints = [[[] for j in range(grid[1])] for i in range(grid[0])]
+    for row in table:
+        i = common.binNumber(grid[0], mindec, maxdec, row['dec'])
+        j = common.binNumber(grid[1], minra, maxra, row['ra'])
+        quints[i][j].append(common.cartesian(row))# + (row['ra'], row['dec']))
+    return quints
+
+def cellPlotting(quints):
+    hist = r.TH2D("%f"%random.random(), " ;RA;Dec", 100, 108, 264, 100, -4, 57)
+    M = quints
+    for k in range(len(M)):
+        hist.Fill(M[k][3], M[k][4])
+    return hist
+
 def splitTable(tab, list):
     r1 = random.sample(list, len(list)/3)
     r2 = random.sample(tab, len(list)/3)
