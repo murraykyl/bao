@@ -46,7 +46,7 @@ def splitTable(tab, list):
     r3 = random.sample(list, len(list)/3)
     return r1, r2, r3, r2prime
 
-def randomChoose(tab, nPoints = 1000):            
+def randomChoose(tab, nPoints = 1):       
     list = []
     subset = random.sample(tab, nPoints)
     for row in subset:

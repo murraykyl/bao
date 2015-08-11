@@ -10,8 +10,8 @@ import itertools
 import common
 import generate
 
-def histAA(list):                                #Create Galaxy Pair Histogram
-    hist = r.TH1D("%f"%random.random(), " ;Mpc;d^2Eta(d)", 100, 0, 200)
+def histAA(list, str):                                #Create Galaxy Pair Histogram
+    hist = r.TH1D(str, str+";Mpc;d^2Eta(d)", 100, 0, 200)
     for (xi,yi,zi) in list:
         if i%100==0: print "i =", i
         for xj,yj,zj in tab[i+1:]:
@@ -19,8 +19,8 @@ def histAA(list):                                #Create Galaxy Pair Histogram
             hist.Fill(d)            
     return hist
 
-def histBB(tab):
-    hist = r.TH1D("%f"%random.random(), " ;Mpc;d^2Eta(d)", 200, 0, 200)
+def histBB(tab, str):
+    hist = r.TH1D(str, str+";Mpc;d^2Eta(d)", 200, 0, 200)
     bb = np.array(tab)
     for i,row in enumerate(bb):
         if i%500==0: print "i= ", i
@@ -36,45 +36,53 @@ if __name__=="__main__":
  #   tabl = Table(data)
   #  print "Open Table"
    # split = generate.splitTable(tabl, generate.openTab('data/randoms_DR9_CMASS_North.fits'))
-#    rando = generate.randomChoose(split[1], 10)
- #   print rando
-  #  slist = []
-   # for tup in rando:
-#        ave = generate.averageNumber(split[3], tup)
- #       slist.append(ave)
-  #  dataF = random.sample(generate.combineLists(slist + [split[0]]), 2000)
-   # dataR = random.sample(split[2], 4000)
-    #dataS = random.sample(split[3], 2000)
-    #outdir = "output/"
+    #rando = generate.randomChoose(split[1], 1)
+#    print rando
+ #   slist = []
+  #  for tup in rando:
+   #     ave = generate.averageNumber(split[3], tup)
+    #    slist.append(ave)
+#    dataF = random.sample(generate.combineLists(slist + [split[0]]), 3000)
+ #   dataR = random.sample(split[2], 6000)
+  #  dataS = random.sample(split[3], 2000)
+   # outdir = "output/"
 
-    grid = (6, 20)
-    dat = random.sample(generate.openData('data/galaxies_DR9_CMASS_North.fits', None, None, grid = (6, 20))[3][4], 2000)
-    histDD = histBB(dat)
-    rand = random.sample(generate.openData('data/randoms_DR9_CMASS_North.fits', None, None, grid = (6, 20))[3][4], 4000)
-    histRR = histBB(rand)
-#    histDpR = histBB(dat+rand)
- #   histDR = histDpR.Clone()
-  #  histDR.Add(histDD, -1)
-   # histDR.Add(histRR, -1)
-    for h in [histDD, histRR]: h.Scale(1./h.Integral())
-    histEp = common.correlationHistogram(histDD, histRR)    
+    float = "%f" % random.random()
+    grid = (4, 5)
+    dat = random.sample(generate.openData('data/galaxies_DR9_CMASS_North.fits', 
+                                          None, None, grid = (4, 5))[1][1], 500)
+    histDD = histBB(dat, "DD"+float)
+    rand = random.sample(generate.openData('data/randoms_DR9_CMASS_North.fits', 
+                                           None, None, grid = (4, 5))[1][1], 1000)
+    histRR = histBB(rand, "RR"+float)
+    histDpR = histBB(dat+rand, "DR"+float)
+    histDR = histDpR.Clone()
+    histDR.Add(histDD, -1)
+    histDR.Add(histRR, -1)
+    for h in [histDD, histDR, histRR]: h.Scale(1./h.Integral())
+    histEp = common.correlationHistogram(histDD, histDR, histRR)    
 
-    tfile = r.TFile.Open("CorrelationFunctionHistograms.root", "recreate")
+    tfile = r.TFile.Open("IndHists"+float+".root", "recreate")
     histDD.Write()
     histRR.Write()
- #   histDpR.Write()
-    histEp.Write()
+    histDR.Write()
     tfile.Close()
 
+    tfile2 = r.TFile.Open("EpHist"+float+".root", "recreate")
+    histEp.Write()
+    tfile2.Close()
+
     c = r.TCanvas()
-    histRR.SetLineColor(r.kRed)
-#    histDR.SetLineColor(r.kBlue)
-    histEp.SetLineColor(r.kGreen)
-    histDD.Draw()
-    histRR.Draw("same")
-    c.Print("CorrelationHistogramDDRR.pdf")
+#    histRR.SetLineColor(r.kRed)
+ #   histDR.SetLineColor(r.kBlue)
+  #  histDD.Draw()
+   # c.Print("DDHist%r"%random.random())
+    #histDR.Draw()
+#    c.Print("DRHist%f"%random.random())
+ #   histRR.Draw()
+  #  c.Print("RRHist%d"%random.random())
     histEp.Draw()
-    c.Print("CorrelationHistogramDDTot.pdf")
+    c.Print("EpHist"+float+".pdf")
 
 
 
