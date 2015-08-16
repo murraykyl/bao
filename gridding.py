@@ -71,7 +71,7 @@ if __name__=="__main__":
     histR.Reset()
     histR.Add(histRR)
 
-    corrhist = correlationHistogram(histD, histDR, histR)
+    corrhist = common.correlationHistogram(histD, histDR, histR)
 
     c = r.TCanvas()
     outFileName = "TestCorrelationFunction.pdf"
