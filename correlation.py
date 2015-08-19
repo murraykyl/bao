@@ -9,6 +9,13 @@ from astropy.table import Table
 import itertools
 import common
 import generate
+import argparse
+
+parser = argparse.ArgumentParser(description='Grid values.')
+parser.add_argument('gridi', metavar='i', type=int, help='The ith value of gridding')
+parser.add_argument('gridj', metavar='j', type=int, help='The jth value of gridding')
+args = parser.parse_args()
+
 
 def histAA(list, str):
     hist = r.TH1D(str, str+";Mpc;d^2Eta(d)", 100, 0, 200)
@@ -50,10 +57,12 @@ if __name__=="__main__":
     float = "%f" % random.random()
     grid = (4, 5)
     dat = random.sample(generate.openData('data/galaxies_DR9_CMASS_North.fits', 
-                                          None, None, grid = (4, 5))[1][1], 3000)
+                                          None, None, 
+                                          grid = (4, 5))[args.gridi][args.gridj], 1000)
     histDD = histBB(dat, "DD"+float)
     rand = random.sample(generate.openData('data/randoms_DR9_CMASS_North.fits', 
-                                           None, None, grid = (4, 5))[1][1], 7000)
+                                           None, None, 
+                                           grid = (4, 5))[args.gridi][args.gridj], 2000)
     histRR = histBB(rand, "RR"+float)
     histDpR = histBB(dat+rand, "DR"+float)
     histDR = histDpR.Clone()
@@ -71,18 +80,3 @@ if __name__=="__main__":
     tfile2 = r.TFile.Open("EpHist"+float+".root", "recreate")
     histEp.Write()
     tfile2.Close()
-
-#    c = r.TCanvas()
-#    histRR.SetLineColor(r.kRed)
- #   histDR.SetLineColor(r.kBlue)
-  #  histDD.Draw()
-   # c.Print("DDHist%r"%random.random())
-    #histDR.Draw()
-#    c.Print("DRHist%f"%random.random())
- #   histRR.Draw()
-  #  c.Print("RRHist%d"%random.random())
- #   histEp.Draw()
-  #  c.Print("EpHist"+float+".pdf")
-
-
-
