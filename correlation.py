@@ -55,14 +55,14 @@ if __name__=="__main__":
    # outdir = "output/"
 
     float = "%f" % random.random()
-    grid = (4, 5)
+    grid = (4, 4)
     dat = random.sample(generate.openData('data/galaxies_DR9_CMASS_North.fits', 
                                           None, None, 
-                                          grid = (4, 5))[args.gridi][args.gridj], 1000)
+                                          grid = (4, 4))[args.gridi][args.gridj], 1000)
     histDD = histBB(dat, "DD"+float)
     rand = random.sample(generate.openData('data/randoms_DR9_CMASS_North.fits', 
                                            None, None, 
-                                           grid = (4, 5))[args.gridi][args.gridj], 2000)
+                                           grid = (4, 4.))[args.gridi][args.gridj], 2000)
     histRR = histBB(rand, "RR"+float)
     histDpR = histBB(dat+rand, "DR"+float)
     histDR = histDpR.Clone()

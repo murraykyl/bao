@@ -4,7 +4,7 @@ import ROOT as r
 
 r.gROOT.SetBatch(True)
 
-tfile = r.TFile.Open("totalResult.root")
+tfile = r.TFile.Open("yeehaw.root")
 histEp = tfile.Get("histEp")
 histEpClone = histEp.Clone()
 
