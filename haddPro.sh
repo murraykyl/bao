@@ -1,10 +1,10 @@
 #! /bin/bash
 
-for i in {1..4}
+for i in {0..3}
 do
-    for j in {1..4}
+    for j in {0..3}
     do
-	python correlation.py $i $j &
+	python correlation.py $i $j 0 1000 &
     done
 done
 

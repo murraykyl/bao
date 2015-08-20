@@ -24,7 +24,6 @@ def openData(filename, nstart = None, nend = None, grid = None):
     maxdec = math.ceil(np.max(table['dec']))
     minra = math.floor(np.min(table['ra']))
     maxra = math.ceil(np.max(table['ra']))
-    print (mindec, maxdec), (minra, maxra)
     quints = [[[] for j in range(grid[1])] for i in range(grid[0])]
     for row in table:
         i = common.binNumber(grid[0], mindec, maxdec, row['dec'])

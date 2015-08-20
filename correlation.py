@@ -14,28 +14,27 @@ import argparse
 parser = argparse.ArgumentParser(description='Grid values.')
 parser.add_argument('gridi', metavar='i', type=int, help='The ith value of gridding')
 parser.add_argument('gridj', metavar='j', type=int, help='The jth value of gridding')
+parser.add_argument('nstart', metavar='n', type=int, help='Beginning of cut')
+parser.add_argument('nend', metavar='e', type=int, help='End of cut')
 args = parser.parse_args()
 
-
-def histAA(list, str):
-    hist = r.TH1D(str, str+";Mpc;d^2Eta(d)", 100, 0, 200)
-    for (xi,yi,zi) in list:
-        if i%100==0: print "i =", i
-        for xj,yj,zj in tab[i+1:]:
-            d = common.absoluteDistance(xi-xj, yi-yj, zi-zj)
-            hist.Fill(d)            
-    return hist
-
 def histBB(tab, str):
-    hist = r.TH1D(str, str+";Mpc;d^2Eta(d)", 200, 0, 200)
+    hist = r.TH1D(str, "Counts;Mpc;"+str, 200, 0, 200)
     bb = np.array(tab)
     for i,row in enumerate(bb):
         if i%500==0: print "i= ", i
-        cc = (row - bb[i:]).T[:3].T
+        cc = (row - bb[i+1:]).T[:3].T
         for d in np.sqrt(np.diag(cc.dot(cc.T))):
             hist.Fill(d)
     return hist
 
+def histAB(list1, list2, str):
+    hist1 = r.TH1D(str, str+";Mpc;"+str, 200, 0, 200)
+    for i in list1:
+        for j in list2:
+            d = common.absoluteDistance(i[0]-j[0], i[1]-j[1], i[2]-j[2])
+            hist1.Fill(d)
+    return hist1
 
 if __name__=="__main__":                       
 
@@ -55,28 +54,51 @@ if __name__=="__main__":
    # outdir = "output/"
 
     float = "%f" % random.random()
+    out1 = "DDHists/"
+    out2 = "RRHists/"
+    out3 = "DRHists/"
+    out4 = "EpHists/"
+    nstart = args.nstart
+    nend = args.nend
     grid = (4, 4)
-    dat = random.sample(generate.openData('data/galaxies_DR9_CMASS_North.fits', 
-                                          None, None, 
-                                          grid = (4, 4))[args.gridi][args.gridj], 1000)
+    dat = generate.openData('data/galaxies_DR9_CMASS_North.fits', 
+                            None, None, 
+                            grid = (4, 4))[args.gridi][args.gridj][nstart:nend]
+#    dat1 = generate.openData('data/galaxies_DR9_CMASS_North.fits', 
+ #                           None, None, 
+  #                          grid = (4, 4))[(args.gridi+1)%4==0][args.gridj][nstart:nend]
     histDD = histBB(dat, "DD"+float)
-    rand = random.sample(generate.openData('data/randoms_DR9_CMASS_North.fits', 
-                                           None, None, 
-                                           grid = (4, 4.))[args.gridi][args.gridj], 2000)
+   # histDDD = histAB(dat, dat1, "DDD"+float)
+    rand = generate.openData('data/randoms_DR9_CMASS_North.fits', 
+                             None, None, 
+                             grid = (4, 4))[args.gridi][args.gridj][nstart:2*nend]
     histRR = histBB(rand, "RR"+float)
     histDpR = histBB(dat+rand, "DR"+float)
     histDR = histDpR.Clone()
     histDR.Add(histDD, -1)
     histDR.Add(histRR, -1)
-    for h in [histDD, histDR, histRR]: h.Scale(1./h.Integral())
-    histEp = common.correlationHistogram(histDD, histDR, histRR)    
+    histEp = common.correlationHistogram(histDD, histDR, histRR)
 
-#    tfile = r.TFile.Open("IndHists"+float+".root", "recreate")
- #   histDD.Write()
-  #  histRR.Write()
-   # histDR.Write()
-    #tfile.Close()
+    DDhist = histDD.Clone("DDhist")
+    RRhist = histRR.Clone("RRhist")
+    DRhist = histDR.Clone("DRhist")
 
-    tfile2 = r.TFile.Open("EpHist"+float+".root", "recreate")
-    histEp.Write()
+    tfile = r.TFile.Open(out1+"DDHist"+float+".root", "recreate")
+    DDhist.Write()
+    tfile.Close()
+
+    tfile2 = r.TFile.Open(out2+"RRHist"+float+".root", "recreate")
+    RRhist.Write()
     tfile2.Close()
+
+    tfile3 = r.TFile.Open(out3+"DRHist"+float+".root", "recreate")
+    DRhist.Write()
+    tfile3.Close()
+
+    tfile4 = r.TFile.Open("EpHist"+float+".root", "recreate")
+    histEp.Write()
+    tfile4.Close()
+
+ #   tfile5 = r.TFile.Open("DDDhist"+float+".root", "recreate")
+  #  histDDD.Write()
+   # tfile5.Close()

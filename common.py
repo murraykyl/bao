@@ -54,17 +54,17 @@ class ComovingDistance(object):
 
 cd = ComovingDistance(0.43, 0.7)
 
-def cartesian(row):                             #Convert to Cartesian Coordinates
+def cartesian(row):                
     """Define New Variable and Convert to Cartesian Coordinates"""
-    r = cd(row['z'])                            #Comoving Distances
-    ra1 = math.pi*row['ra']/180                 #Convert to Radians
-    dec1 = math.pi*row['dec']/180               #Convert to Radians
-    x = r * math.cos(ra1) * math.cos(dec1)      #X-Coordinate
-    y = r * math.sin(ra1) * math.cos(dec1)      #Y-Coordinate
-    z = r * math.sin(dec1)                      #Z-Coordinate
+    r = cd(row['z'])               
+    ra1 = math.pi*row['ra']/180    
+    dec1 = math.pi*row['dec']/180  
+    x = r * math.cos(ra1) * math.cos(dec1)     
+    y = r * math.sin(ra1) * math.cos(dec1)     
+    z = r * math.sin(dec1)                     
     return x,y,z
 
-def absoluteDistance(xd,yd,zd):                 #Define Distances between Galaxies
+def absoluteDistance(xd,yd,zd):                
     return math.sqrt(xd**2 + yd**2 + zd**2)
 
 def correlationHistogram(histDD, histDR, histRR):
