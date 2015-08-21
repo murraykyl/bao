@@ -14,10 +14,10 @@ import argparse
 parser = argparse.ArgumentParser(description='Grid values.')
 parser.add_argument('dataA', metavar='a', type=str, help='Dataset A')
 parser.add_argument('dataB', metavar='b', type=str, help='Dataset B')
-parser.add_argument('grid1', metavar='i', type=tuple, help='Grid cell a')
-parser.add_argument('grid2', metavar='k', type=tuple, help='Grid cell b')
-parser.add_argument('njobs', metavar='n', type=int, help='Number of sub jobs')
-parser.add_argument('jobID', metavar='m', type=int, help='Job name')
+parser.add_argument('grid1i', metavar='i', type=int, help='The ith component of cell a')
+parser.add_argument('grid1j', metavar='j', type=int, help='The jth component of cell a')
+parser.add_argument('grid2i', metavar='k', type=int, help='The ith component of cell b')
+parser.add_argument('grid2j', metavar='l', type=int, help='The ith component of cell b')
 args = parser.parse_args()
 
 
@@ -39,6 +39,16 @@ def histBB(tab, str):
             hist.Fill(d)
     return hist
 
+def resultHist(file, file1, dataA, dataB, gridA, gridB, str):
+    if dataA==dataB and gridA==gridB:
+        dat = generate.openData(filename, None, None, grid = (4,4))[gridA[0]][gridA[1]]
+        hist = histBB(dat, dataA+dataB+str)
+    else:
+        Aalpha = generate.openData(file, None, None, grid = (4,4))[gridA[0]][gridA[1]]
+        Bbeta = generate.openData(file1, None, None, grid = (4,4))[gridB[0]][gridB[1]]
+        hist = histAB(Aalpha, Bbeta, dataA+dataB+str)
+    return hist
+                      
 
 if __name__=="__main__":                       
 
@@ -52,8 +62,13 @@ if __name__=="__main__":
     else:
         filename1 = 'data/randoms_DR9_CMASS_North.fits'
 
-    alpha = args.grid1
-    beta = args.grid2
+    alpha = (args.grid1i, args.grid1j)
+    beta = (args.grid2i, args.grid2j)
+
+    Aalpha = generate.openData(filename, None, None, grid = (4,4))[alpha[0]][alpha[1]]
+    Bbeta = generate.openData(filename1, None, None, grid = (4,4))[beta[0]][beta[1]]
+
+    njobs = math.ceil(len(Aalpha)/20000)
 
     float = "%f" % random.random()
     out1 = "DDHists/"
@@ -61,32 +76,29 @@ if __name__=="__main__":
     out3 = "DRHists/"
     out4 = "EpHists/"
 
-    if args.dataA==args.dataB && alpha==beta:
-        dat = generate.open Data(filename, None, None, grid = (4,4))[alpha[0]][alpha[1]]
-        return histAA = histBB(dat, args.dataA+args.dataA+float)
+    hist = resultHist(filename, filename1, args.dataA, args.dataB, alpha, beta, float)
+
+    if dataA==dataB and alpha==beta and len(Aalpha)<20000:
+        for iA,a in enumerate(Aalpha):
+            for jA in range(iA+1, len(Aalpha)):
+                hist.Fill(common.absoluteDistance(a[0]-Aalpha[jA][0], 
+                                                  a[1]-Aalpha[jA][1], 
+                                                  a[2]-Aalpha[jA][2]))
+    elif dataA==dataB and alpha==beta and len(Aalpha)>20000:        
+        for a in Aalph[jobID::(len(Aalpha)/njobs)]:
+            for ja in Aalpha[jobID::(len(Aalpha)/njobs)]:
+                hist.Fill(a[0]-ja[0], a[1]-ja[1], a[2]-ja[2])
+    elif len(Aalpha)<20000:
+        for a in Aalpha:
+            for b in Bbeta:
+                hist.Fill(common.absoluteDistance(a[0]-b[0], a[1]-b[1], a[2]-b[2]))
+    elif len(Aalpha)<20000:
+        for iA in [0,1,2]:
+            a = Aalph[iA]
+            for b in Bbeta:
+                hist.Fill(dist(a[0]-b[0], a[1]-b[1], a[2]-b[2]))
     else:
-        dat = generate.openData(filename, None, None, grid = (4, 4))[alpha[0]][alpha[1]]
-        dat1 = generate.openData(filename1, None, None, grid = (4, 4))[beta[0]][beta[1]]
-        return histAB = histAB(dat, dat1, args.dataA+args.dataB+float)
-
-    for a in Aalph:
-        for b in Bbeta:
-            hist.Fill(dist(a,b))
-        return hist
-
-    for iA in [0,1,2]:
-        a = Aalph[iA]
-        for b in Bbeta:
-            hist.Fill(dist(a,b))
-        return hist
-
-    for a in Aalph[args.jobID::(len(Aalph)/args.njobs)]:
-        return yes
-
-    for iA,a in enumerate(Aalph):
-        for jA in range(iA+1, len(Aalph)):
-            hist.Fill(dist(a, Aalph[iA]))
-        return hist
+        pass
                       
     DDhist = histDD.Clone("DDhist")
     RRhist = histRR.Clone("RRhist")
