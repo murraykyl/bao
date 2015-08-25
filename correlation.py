@@ -23,16 +23,16 @@ parser.add_argument('jobID', metavar='m', type=int, help='Job ID number')
 args = parser.parse_args()
 
 
-def histAB(list1, list2, str):
-    hist1 = r.TH1D(str, str+";Mpc;Counts", 200, 0, 200)
+def histAB(list1, list2, nam):
+    hist1 = r.TH1D(nam, nam+";Mpc;Counts", 200, 0, 200)
     for i in list1:
         for j in list2:
             d = common.absoluteDistance(i[0]-j[0], i[1]-j[1], i[2]-j[2])
             hist1.Fill(d)
     return hist1
 
-def histBB(tab, str):
-    hist = r.TH1D(str, "Counts;Mpc;"+str, 200, 0, 200)
+def histBB(tab, njobs, jobID, nam):
+    hist = r.TH1D(nam, "Counts;Mpc;"+nam, 200, 0, 200)
     bb = np.array(tab)
     for i,row in enumerate(bb):
         if i%500==0: print "i= ", i
@@ -41,16 +41,25 @@ def histBB(tab, str):
             hist.Fill(d)
     return hist
 
-def resultHist(file, file1, dataA, dataB, gridA, gridB, str):
+def resultHist(file, file1, dataA, dataB, gridA, gridB, njobs, jobID, nam):
     if dataA==dataB and gridA==gridB:
         dat = generate.openData(filename, None, None, grid = (4,4))[gridA[0]][gridA[1]]
-        print (len(dat)*(len(dat)-1))/2
-        hist = histBB(dat, dataA+dataB+str)
+        mn =(len(dat)*(len(dat)-1))/2
+        print mn
+        dat1 = dat[jobID::njobs]
+        hist = histBB(dat1, njobs, jobID, dataA+dataB+nam)
     else:
         Aalpha = generate.openData(file, None, None, grid = (4,4))[gridA[0]][gridA[1]]
         Bbeta = generate.openData(file1, None, None, grid = (4,4))[gridB[0]][gridB[1]]
         print len(Aalpha)*len(Bbeta)
-        hist = histAB(Aalpha, Bbeta, dataA+dataB+str)
+        if len(Aalpha) < len(Bbeta):
+            Aalpha1 = Aalpha[jobID::njobs]
+            hist = histAB(Aalpha1, Bbeta, dataA+dataB+nam)
+        elif len(Aalpha) > len(Bbeta):
+            Bbeta1 = Bbeta[jobID::njobs]
+            hist = histAB(Bbeta1, Aalpha, dataA+dataB+nam)
+        else:
+            pass
     return hist                      
 
 
@@ -80,10 +89,14 @@ if __name__=="__main__":
     njobs = args.njobs
     jobID = args.jobID
 
-    float = "%f" % random.random()
-    print float
+    numb = "%f" % random.random()
+    print numb
 
-    hist = resultHist(filename, filename1, args.dataA, args.dataB, alpha, beta, float)
+    hist = resultHist(filename, filename1, 
+                      args.dataA, args.dataB, 
+                      alpha, beta, 
+                      njobs, jobID,
+                      numb)
 
 #    if dataA==dataB and alpha==beta:
  #       for iA,a in enumerate(Aalpha):
@@ -111,7 +124,7 @@ if __name__=="__main__":
 
     print DDhist
 
-    tfile = r.TFile.Open("DDHist"+float+".root", 
+    tfile = r.TFile.Open("DDHist"+numb+".root", 
                          "recreate")
     DDhist.Write()
     tfile.Close()
